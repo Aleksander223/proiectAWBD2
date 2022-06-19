@@ -33,15 +33,15 @@ public class ProductController {
     }
     @GetMapping(value = "/product/list", produces = {"application/hal+json"})
     public CollectionModel<Product> findAll() {
-        List<Product> subscriptions = productService.findAll();
-        for (final Product subscription : subscriptions) {
-            Link selfLink = linkTo(methodOn(ProductController.class).getProduct(subscription.getId())).withSelfRel();
-            subscription.add(selfLink);
-            Link deleteLink = linkTo(methodOn(ProductController.class).deleteProduct(subscription.getId())).withRel("deleteSubscription");
-            subscription.add(deleteLink);
+        List<Product> products = productService.findAll();
+        for (final Product product : products) {
+            Link selfLink = linkTo(methodOn(ProductController.class).getProduct(product.getId())).withSelfRel();
+            product.add(selfLink);
+            Link deleteLink = linkTo(methodOn(ProductController.class).deleteProduct(product.getId())).withRel("deleteProduct");
+            product.add(deleteLink);
         }
         Link link = linkTo(methodOn(ProductController.class).findAll()).withSelfRel();
-        CollectionModel<Product> result = CollectionModel.of(subscriptions, link);
+        CollectionModel<Product> result = CollectionModel.of(products, link);
         return result;
     }
 
@@ -77,9 +77,9 @@ public class ProductController {
             @ApiResponse(responseCode = "404", description = "Product not found",
                     content = @Content)})
     @DeleteMapping("/product/{productId}")
-    public Product deleteProduct(@PathVariable Long subscriptionId) {
+    public Product deleteProduct(@PathVariable Long productId) {
 
-        Product product = productService.delete(subscriptionId);
+        Product product = productService.delete(productId);
         return product;
     }
     @GetMapping("/product/{productId}")
